@@ -14,7 +14,8 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
   late List<String> _targetCode;
   List<String> _currentGuess = [];
   List<List<String>> _previousGuesses = [];
-  List<List<int>> _previousScores = []; // Changed to store [exact, partial] matches
+  List<List<int>> _previousScores =
+      []; // Changed to store [exact, partial] matches
   bool _showCongrats = false;
 
   @override
@@ -57,7 +58,7 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
     List<String> remainingGuess = List.from(_currentGuess);
     List<bool> matchedIndices = List.generate(4, (_) => false);
     List<bool> usedGuessIndices = List.generate(4, (_) => false);
-    
+
     // First pass: Find exact matches
     int exactMatches = 0;
     for (int i = 0; i < 4; i++) {
@@ -76,7 +77,8 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
       if (usedGuessIndices[i]) continue;
       for (int j = 0; j < 4; j++) {
         if (matchedIndices[j]) continue;
-        if (remainingGuess[i] == remainingTarget[j] && remainingGuess[i].isNotEmpty) {
+        if (remainingGuess[i] == remainingTarget[j] &&
+            remainingGuess[i].isNotEmpty) {
           partialMatches++;
           matchedIndices[j] = true;
           usedGuessIndices[i] = true;
@@ -147,7 +149,9 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Fixed game header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -171,6 +175,8 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
+
+            // Fixed controls
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _codeElements.map((element) {
@@ -184,6 +190,8 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               }).toList(),
             ),
             const SizedBox(height: 16),
+
+            // Current guess display
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -212,6 +220,8 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               ],
             ),
             const SizedBox(height: 16),
+
+            // Game controls
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -227,50 +237,113 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               ],
             ),
             const SizedBox(height: 24),
-            ..._previousGuesses.asMap().entries.map((entry) {
-              int index = entry.key;
-              List<String> guess = entry.value;
-              List<int> scores = _previousScores[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ...guess.map((element) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(element),
-                      );
-                    }),
-                    const SizedBox(width: 16),
-                    Text('🎯 ${scores[0]} exact  •  🔄 ${scores[1]} misplaced'),
-                  ],
+
+            // Scrollable area for previous guesses
+            Flexible(
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxHeight: 300, // Fixed height for scrollable area
                 ),
-              );
-            }),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(0.3),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: _previousGuesses.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            'Your previous guesses will appear here',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children:
+                                _previousGuesses.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              List<String> guess = entry.value;
+                              List<int> scores = _previousScores[index];
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ...guess.map((element) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 4),
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Text(element),
+                                      );
+                                    }),
+                                    const SizedBox(width: 16),
+                                    Flexible(
+                                      child: Text(
+                                        '🎯 ${scores[0]} exact  •  🔄 ${scores[1]} misplaced',
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+
+            // Congratulations message
             if (_showCongrats) ...[
               const SizedBox(height: 24),
-              const Text(
-                '🎉 Congratulations! You broke the code! 🎉',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green.withOpacity(0.5)),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      '🎉 Congratulations! You broke the code! 🎉',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _initializeGame();
+                        });
+                      },
+                      child: const Text('Play Again'),
+                    ),
+                  ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _initializeGame();
-                  });
-                },
-                child: const Text('Play Again'),
-              ),
+              const SizedBox(height: 16),
             ],
           ],
         ),

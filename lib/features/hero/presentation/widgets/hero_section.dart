@@ -10,6 +10,25 @@ import '../../../../shared/widgets/welcome_card.dart';
 // Define a typedef for the scroll function
 typedef ScrollToSectionCallback = void Function(String section);
 
+// Animation timing constants
+class AnimationTiming {
+  static const Duration entranceDuration = Duration(milliseconds: 2000);
+  static const Duration continuousDuration = Duration(seconds: 2);
+  static const Duration confettiDuration = Duration(seconds: 2);
+
+  // Animation intervals
+  static const Interval welcomeInterval =
+      Interval(0.0, 0.3, curve: Curves.easeOut);
+  static const Interval profilePicInterval =
+      Interval(0.15, 0.45, curve: Curves.easeOut);
+  static const Interval nameInterval =
+      Interval(0.3, 0.6, curve: Curves.easeOut);
+  static const Interval roleInterval =
+      Interval(0.45, 0.75, curve: Curves.easeOut);
+  static const Interval buttonsInterval =
+      Interval(0.6, 0.9, curve: Curves.easeOut);
+}
+
 class HeroSection extends StatefulWidget {
   final ScrollToSectionCallback? onScrollToSection;
 
@@ -119,7 +138,7 @@ class _HeroSectionState extends State<HeroSection>
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
-    final isSmallScreen = MediaQuery.of(context).size.width < 800;
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return SelectionArea(
       child: ConstrainedBox(
@@ -216,7 +235,7 @@ class _HeroSectionState extends State<HeroSection>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: isSmallScreen ? 60 : 60),
+                  SizedBox(height: isSmallScreen ? 30 : 60),
 
                   // Welcome message - play once
                   AnimatedBuilder(
@@ -243,8 +262,8 @@ class _HeroSectionState extends State<HeroSection>
                         scale: _profilePicAnimation.value,
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxWidth: isSmallScreen ? 130 : 160,
-                            maxHeight: isSmallScreen ? 130 : 160,
+                            maxWidth: isSmallScreen ? 100 : 130,
+                            maxHeight: isSmallScreen ? 100 : 130,
                           ),
                           child: Container(
                             decoration: BoxDecoration(
@@ -261,7 +280,7 @@ class _HeroSectionState extends State<HeroSection>
                               ],
                             ),
                             child: CircleAvatar(
-                              radius: isSmallScreen ? 65 : 80,
+                              radius: isSmallScreen ? 50 : 65,
                               backgroundImage:
                                   const AssetImage('assets/images/pfp.jpg'),
                             ),
@@ -287,7 +306,7 @@ class _HeroSectionState extends State<HeroSection>
                             child: SelectableText(
                               'Ahmed Ibrahim',
                               style: TextStyle(
-                                fontSize: isSmallScreen ? 36 : 48,
+                                fontSize: isSmallScreen ? 30 : 40,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
                                 letterSpacing: 1.5,
@@ -359,12 +378,12 @@ class _HeroSectionState extends State<HeroSection>
                               SoundButton(
                                 onPressed: () => _scrollToSection('Projects'),
                                 style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isSmallScreen ? 16 : 24,
-                                    vertical: isSmallScreen ? 12 : 16,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
                                   ),
-                                  textStyle: TextStyle(
-                                    fontSize: isSmallScreen ? 14 : 16,
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -381,12 +400,12 @@ class _HeroSectionState extends State<HeroSection>
                               OutlinedSoundButton(
                                 onPressed: () => _scrollToSection('Contact'),
                                 style: OutlinedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isSmallScreen ? 16 : 24,
-                                    vertical: isSmallScreen ? 12 : 16,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
                                   ),
-                                  textStyle: TextStyle(
-                                    fontSize: isSmallScreen ? 14 : 16,
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

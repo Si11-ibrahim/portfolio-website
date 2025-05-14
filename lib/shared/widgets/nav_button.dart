@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/audio_service.dart';
+
 class NavButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
@@ -28,7 +30,11 @@ class _NavButtonState extends State<NavButton> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4.0),
         child: TextButton(
-          onPressed: widget.onPressed,
+          onPressed: () {
+            // Play tap sound when button is clicked
+            AudioService().playTapSound();
+            widget.onPressed();
+          },
           style: TextButton.styleFrom(
             foregroundColor: widget.isActive
                 ? theme.colorScheme.primary
@@ -41,7 +47,8 @@ class _NavButtonState extends State<NavButton> {
               Text(
                 widget.label,
                 style: TextStyle(
-                  fontWeight: widget.isActive ? FontWeight.bold : FontWeight.normal,
+                  fontWeight:
+                      widget.isActive ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
               const SizedBox(height: 4),

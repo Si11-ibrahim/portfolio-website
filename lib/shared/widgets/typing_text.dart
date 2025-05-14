@@ -12,7 +12,7 @@ class TypingText extends StatefulWidget {
     required this.texts,
     this.style,
     this.typingSpeed = const Duration(milliseconds: 100),
-    this.pauseDuration = const Duration(seconds: 2),
+    this.pauseDuration = const Duration(milliseconds: 2000),
     this.deletingSpeed = const Duration(milliseconds: 50),
   });
 
@@ -22,50 +22,54 @@ class TypingText extends StatefulWidget {
 
 class _TypingTextState extends State<TypingText> {
   late String _currentText;
-  late int _currentIndex;
-  late bool _isDeleting;
-  String _displayedText = '';
+  late int _textIndex;
+  late int _charIndex;
+  late bool _isTyping;
+  late bool _isPaused;
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = 0;
-    _currentText = widget.texts[_currentIndex];
-    _isDeleting = false;
+    _currentText = '';
+    _textIndex = 0;
+    _charIndex = 0;
+    _isTyping = true;
+    _isPaused = false;
     _startTypingAnimation();
   }
 
-  Future<void> _startTypingAnimation() async {
+  void _startTypingAnimation() async {
     while (mounted) {
-      await Future.delayed(
-        _isDeleting ? widget.deletingSpeed : widget.typingSpeed,
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        if (!_isDeleting) {
-          if (_displayedText.length < _currentText.length) {
-            _displayedText =
-                _currentText.substring(0, _displayedText.length + 1);
-          } else {
-            _isDeleting = true;
-            return;
-          }
+      if (_isTyping) {
+        // Typing phase
+        if (_charIndex < widget.texts[_textIndex].length) {
+          setState(() {
+            _currentText =
+                widget.texts[_textIndex].substring(0, _charIndex + 1);
+            _charIndex++;
+          });
+          await Future.delayed(widget.typingSpeed);
         } else {
-          if (_displayedText.isNotEmpty) {
-            _displayedText =
-                _displayedText.substring(0, _displayedText.length - 1);
-          } else {
-            _isDeleting = false;
-            _currentIndex = (_currentIndex + 1) % widget.texts.length;
-            _currentText = widget.texts[_currentIndex];
-          }
+          // Finished typing current text
+          _isTyping = false;
+          _isPaused = true;
+          await Future.delayed(widget.pauseDuration);
+          _isPaused = false;
         }
-      });
-
-      if (!_isDeleting && _displayedText.length == _currentText.length) {
-        await Future.delayed(widget.pauseDuration);
+      } else {
+        // Deleting phase
+        if (_charIndex > 0) {
+          setState(() {
+            _currentText =
+                widget.texts[_textIndex].substring(0, _charIndex - 1);
+            _charIndex--;
+          });
+          await Future.delayed(widget.deletingSpeed);
+        } else {
+          // Move to next text
+          _textIndex = (_textIndex + 1) % widget.texts.length;
+          _isTyping = true;
+        }
       }
     }
   }
@@ -74,9 +78,10 @@ class _TypingTextState extends State<TypingText> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          _displayedText,
+          _currentText,
           style: widget.style,
         ),
         _buildCursor(),
@@ -86,8 +91,8 @@ class _TypingTextState extends State<TypingText> {
 
   Widget _buildCursor() {
     return AnimatedOpacity(
+      opacity: _isPaused ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 500),
-      opacity: _displayedText.length == _currentText.length ? 0.0 : 1.0,
       child: Text(
         '|',
         style: widget.style,

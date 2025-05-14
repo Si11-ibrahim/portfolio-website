@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../features/home/presentation/pages/home_page.dart';
 import '../shared/theme/app_theme.dart';
 import '../shared/theme/theme_provider.dart';
@@ -11,7 +12,8 @@ class PortfolioApp extends StatefulWidget {
 }
 
 class _PortfolioAppState extends State<PortfolioApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+  // Set dark mode as the default theme
+  ThemeMode _themeMode = ThemeMode.dark;
 
   void _handleThemeModeChanged(ThemeMode mode) {
     setState(() {

@@ -1,80 +1,176 @@
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
+import '../../../../shared/widgets/particle_background.dart';
 import '../../../about/presentation/widgets/tech_stack_cube.dart';
 import '../../../projects/presentation/widgets/code_breaker_game.dart';
 import 'terminal_intro.dart';
-import '../../../../shared/widgets/particle_background.dart';
 
-class FunSection extends StatelessWidget {
+class FunSection extends StatefulWidget {
   const FunSection({super.key});
 
   @override
+  State<FunSection> createState() => _FunSectionState();
+}
+
+class _FunSectionState extends State<FunSection>
+    with SingleTickerProviderStateMixin {
+  bool _isVisible = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeInAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _fadeInAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 800, // Fixed height for the section
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ParticleBackground(
-            baseColor: Theme.of(context).colorScheme.primary,
-          ),
-          SingleChildScrollView(
-            child: Container(
+    // Use ConstrainedBox instead of SizedBox to ensure minimum height
+    // but allow expansion if needed
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 700, // Slightly smaller minimum height
+      ),
+      child: VisibilityDetector(
+        key: const Key('fun-section-detector'),
+        onVisibilityChanged: (VisibilityInfo info) {
+          if (info.visibleFraction > 0.3 && !_isVisible) {
+            setState(() {
+              _isVisible = true;
+              _animationController.forward();
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            // Background that doesn't depend on size
+            Positioned.fill(
+              child: AnimatedOpacity(
+                opacity: _isVisible ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 1500),
+                curve: Curves.easeOut,
+                child: ParticleBackground(
+                  baseColor: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            // Content in a column that can expand if needed
+            Container(
               constraints: const BoxConstraints(maxWidth: 1200),
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
               child: Column(
+                mainAxisSize:
+                    MainAxisSize.min, // Allow column to size to content
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(32.0),
-                    child: Text(
-                      'Fun Interactive Zone',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  // Header content
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) => Opacity(
+                      opacity: _fadeInAnimation.value,
+                      child: child,
+                    ),
+                    child: const Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Text(
+                            'Interactive Zone',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32.0),
+                          child: TerminalIntro(),
+                        ),
+                        SizedBox(height: 32),
+                      ],
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32.0),
-                    child: TerminalIntro(),
-                  ),
-                  const SizedBox(height: 48),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      if (constraints.maxWidth > 800) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const TechStackCube(),
-                            const SizedBox(width: 48),
-                            Flexible(
-                              child: Container(
+
+                  // Interactive elements section
+                  AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) => Opacity(
+                      opacity: _fadeInAnimation.value,
+                      child: child,
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth > 800) {
+                          // Desktop layout - side by side
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Left side - Tech Stack Cube
+                              const SizedBox(
+                                width: 300,
+                                height: 300,
+                                child: TechStackCube(),
+                              ),
+                              const SizedBox(width: 48),
+                              // Right side - Code Breaker (scrollable internally)
+                              Flexible(
+                                child: Container(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 500),
+                                  child: const CodeBreakerGame(),
+                                ),
+                              ),
+                            ],
+                          );
+                        } else {
+                          // Mobile layout
+                          return Column(
+                            mainAxisSize:
+                                MainAxisSize.min, // Allow to size to content
+                            children: [
+                              // Tech Stack Cube
+                              const SizedBox(
+                                height: 300,
+                                child: TechStackCube(),
+                              ),
+                              const SizedBox(height: 32),
+                              // Code Breaker Game (scrollable internally)
+                              Container(
                                 constraints:
                                     const BoxConstraints(maxWidth: 500),
                                 child: const CodeBreakerGame(),
                               ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return Column(
-                          children: [
-                            const TechStackCube(),
-                            const SizedBox(height: 32),
-                            Container(
-                              constraints: const BoxConstraints(maxWidth: 500),
-                              child: const CodeBreakerGame(),
-                            ),
-                          ],
-                        );
-                      }
-                    },
+                            ],
+                          );
+                        }
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 48),
+
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
