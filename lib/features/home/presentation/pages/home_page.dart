@@ -366,7 +366,8 @@ class _HomePageState extends State<HomePage> {
                       isActive: _activeSection == 'Contact',
                     ),
                   ],
-          ),          SliverToBoxAdapter(
+          ),
+          SliverToBoxAdapter(
             child: Column(
               children: [
                 // Audio permission banner for web users

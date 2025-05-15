@@ -69,7 +69,8 @@ class ProjectsSection extends StatelessWidget {
                           'https://medium.com/@ahamedibrahim0004/how-we-built-a-mobile-based-sdn-simulator-using-flutter-and-mininet-ba6994162942';
                       linkLabel =
                           'SDN Simulator Article With Source Code (Medium)';
-                    }                    return ProjectCard(
+                    }
+                    return ProjectCard(
                       title: projects[index].$1,
                       description: projects[index].$2,
                       icon: projects[index].$3,

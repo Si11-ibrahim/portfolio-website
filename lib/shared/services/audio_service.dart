@@ -38,7 +38,7 @@ class AudioService {
       await _hoverPlayer.setSourceAsset('audio/hover.mp3');
       _isHoverSoundReady = true;
       log('Hover sound initialized successfully');
-      
+
       // For web, provide extra debug logging
       if (kIsWeb) {
         log('Audio initialized for web - will require user interaction');
@@ -57,14 +57,15 @@ class AudioService {
       log('Playing tap sound');
       // Always mark that user has interacted with the page
       _hasUserInteracted = true;
-      
+
       // On web, we need to check if we already have permission to play audio
       if (kIsWeb) {
-        _tapPlayer.play(AssetSource('audio/tap.mp3'), volume: 0.5)
-          .catchError((error) {
-            // Log but don't rethrow, so the app continues normally even if audio fails
-            log('Web audio playback error: $error');
-          });
+        _tapPlayer
+            .play(AssetSource('audio/tap.mp3'), volume: 0.5)
+            .catchError((error) {
+          // Log but don't rethrow, so the app continues normally even if audio fails
+          log('Web audio playback error: $error');
+        });
       } else {
         // On non-web platforms, play normally
         _tapPlayer.play(AssetSource('audio/tap.mp3'), volume: 0.5);
@@ -85,14 +86,15 @@ class AudioService {
       if (kIsWeb && !_hasUserInteracted) {
         return;
       }
-      
+
       // On web, we need to handle potential errors without crashing
       if (kIsWeb) {
-        _confettiPlayer.play(AssetSource('audio/confetti.mp3'), volume: 0.7)
-          .catchError((error) {
-            // Log but don't rethrow
-            log('Web confetti sound playback error: $error');
-          });
+        _confettiPlayer
+            .play(AssetSource('audio/confetti.mp3'), volume: 0.7)
+            .catchError((error) {
+          // Log but don't rethrow
+          log('Web confetti sound playback error: $error');
+        });
       } else {
         // On non-web platforms, play normally
         _confettiPlayer.play(AssetSource('audio/confetti.mp3'), volume: 0.7);
@@ -109,16 +111,17 @@ class AudioService {
     if (kIsWeb && !_hasUserInteracted) {
       return;
     }
-    
+
     try {
       log('Playing hover sound');
       // On web, we need to handle potential errors without crashing
       if (kIsWeb) {
-        _hoverPlayer.play(AssetSource('audio/hover.mp3'), volume: 0.5)
-          .catchError((error) {
-            // Log but don't rethrow
-            log('Web hover sound playback error: $error');
-          });
+        _hoverPlayer
+            .play(AssetSource('audio/hover.mp3'), volume: 0.5)
+            .catchError((error) {
+          // Log but don't rethrow
+          log('Web hover sound playback error: $error');
+        });
       } else {
         // On non-web platforms, play normally
         _hoverPlayer.play(AssetSource('audio/hover.mp3'), volume: 0.5);
@@ -133,7 +136,7 @@ class AudioService {
     if (!_hasUserInteracted) {
       log('User interaction detected - enabling audio');
       _hasUserInteracted = true;
-      
+
       // On web, try to initialize audio by playing a silent sound
       if (kIsWeb) {
         // Create a short, silent sound to try to unlock the audio context

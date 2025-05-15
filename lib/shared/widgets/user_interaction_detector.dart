@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../services/audio_service.dart';
 
 /// A widget that detects and marks user interactions to enable audio playback on web
-/// 
-/// This is particularly useful for web platforms where browsers require a user 
+///
+/// This is particularly useful for web platforms where browsers require a user
 /// interaction before allowing audio to play. This widget wraps around the app
 /// to ensure audio permission is properly granted.
 class UserInteractionDetector extends StatelessWidget {
