@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../features/home/presentation/pages/home_page.dart';
 import '../shared/theme/app_theme.dart';
 import '../shared/theme/theme_provider.dart';
+import '../shared/widgets/user_interaction_detector.dart';
 
 class PortfolioApp extends StatefulWidget {
   const PortfolioApp({super.key});
@@ -32,7 +33,9 @@ class _PortfolioAppState extends State<PortfolioApp> {
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         themeMode: _themeMode,
-        home: const HomePage(),
+        home: const UserInteractionDetector(
+          child: HomePage(),
+        ),
       ),
     );
   }

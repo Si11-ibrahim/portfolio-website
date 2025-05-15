@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/audio_permission_banner.dart';
 import '../../../../shared/widgets/drawer_list_tile.dart';
 import '../../../../shared/widgets/footer.dart';
 import '../../../../shared/widgets/nav_button.dart';
@@ -365,10 +366,11 @@ class _HomePageState extends State<HomePage> {
                       isActive: _activeSection == 'Contact',
                     ),
                   ],
-          ),
-          SliverToBoxAdapter(
+          ),          SliverToBoxAdapter(
             child: Column(
               children: [
+                // Audio permission banner for web users
+                const AudioPermissionBanner(),
                 HeroSection(
                   key: _sectionKeys['Home'],
                   onScrollToSection: _scrollToSection,

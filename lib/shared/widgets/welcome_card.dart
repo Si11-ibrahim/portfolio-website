@@ -20,7 +20,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
   double _rotateX = 0;
   double _rotateY = 0;
   bool _isHovering = false;
-  bool _hasInteracted = false;
 
   void _playCelebration() {
     // Force stop and restart the confetti animation for consistent behavior
@@ -34,28 +33,20 @@ class _WelcomeCardState extends State<WelcomeCard> {
 
     // Play confetti sound using the central AudioService
     AudioService().playConfettiSound();
-
-    // Mark first interaction for the welcome card
-    if (!_hasInteracted) {
-      setState(() {
-        _hasInteracted = true;
-      });
-      // Mark user interaction in the audio service as well
-      AudioService().markUserInteraction();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
-    final isSmallScreen = MediaQuery.of(context).size.width < 600;
-
-    return MouseRegion(
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;    return MouseRegion(
       onEnter: (_) {
         setState(() {
           _isHovering = true;
         });
+        
+        // Only trigger celebration if it's not web or user has already interacted
+        // The audio service will handle skipping sounds if needed
         _playCelebration();
       },
       onExit: (_) {

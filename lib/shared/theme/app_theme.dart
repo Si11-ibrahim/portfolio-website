@@ -77,7 +77,6 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: darkBgColor,
       cardColor: cardColor,
-      dialogBackgroundColor: surfaceColor,
       appBarTheme: AppBarTheme(
         backgroundColor: darkBgColor.withOpacity(0.8),
         foregroundColor: Colors.white,

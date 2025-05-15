@@ -18,7 +18,8 @@ class ProjectCard extends StatefulWidget {
   State<ProjectCard> createState() => _ProjectCardState();
 }
 
-class _ProjectCardState extends State<ProjectCard> with SingleTickerProviderStateMixin {
+class _ProjectCardState extends State<ProjectCard>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
   late final AnimationController _controller;
   late final Animation<double> _scaleAnimation;
@@ -71,7 +72,7 @@ class _ProjectCardState extends State<ProjectCard> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -84,7 +85,7 @@ class _ProjectCardState extends State<ProjectCard> with SingleTickerProviderStat
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: _isHovered 
+                color: _isHovered
                     ? theme.colorScheme.primary.withOpacity(0.3)
                     : Colors.black.withOpacity(0.1),
                 blurRadius: _isHovered ? 16 : 8,
