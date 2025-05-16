@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../../shared/widgets/particle_background.dart';
-import '../../../about/presentation/widgets/tech_stack_cube.dart';
+import '../../../about/presentation/widgets/interactive_memory_game.dart';
 import '../../../projects/presentation/widgets/code_breaker_game.dart';
-import 'terminal_intro.dart';
+import 'interactive_intro.dart';
 
 class FunSection extends StatefulWidget {
   const FunSection({super.key});
@@ -101,7 +101,7 @@ class _FunSectionState extends State<FunSection>
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32.0),
-                          child: TerminalIntro(),
+                          child: InteractiveIntro(),
                         ),
                         SizedBox(height: 32),
                       ],
@@ -123,11 +123,12 @@ class _FunSectionState extends State<FunSection>
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Left side - Tech Stack Cube
-                              const SizedBox(
-                                width: 300,
-                                height: 300,
-                                child: TechStackCube(),
+                              // Left side - Memory Match Game
+                              Container(
+                                width: constraints.maxWidth * 0.45,
+                                constraints:
+                                    const BoxConstraints(maxWidth: 450),
+                                child: const InteractiveMemoryGame(),
                               ),
                               const SizedBox(width: 48),
                               // Right side - Code Breaker (scrollable internally)
@@ -146,16 +147,19 @@ class _FunSectionState extends State<FunSection>
                             mainAxisSize:
                                 MainAxisSize.min, // Allow to size to content
                             children: [
-                              // Tech Stack Cube
+                              // Interactive Tech Skills
+                              const InteractiveMemoryGame(),
                               const SizedBox(
-                                height: 300,
-                                child: TechStackCube(),
-                              ),
-                              const SizedBox(height: 32),
-                              // Code Breaker Game (scrollable internally)
+                                  height:
+                                      32), // Code Breaker Game (scrollable internally)
                               Container(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 500),
+                                constraints: BoxConstraints(
+                                  maxWidth: 500,
+                                  // Set min width to prevent excessive shrinking
+                                  minWidth: constraints.maxWidth > 320
+                                      ? 320
+                                      : constraints.maxWidth,
+                                ),
                                 child: const CodeBreakerGame(),
                               ),
                             ],

@@ -142,9 +142,8 @@ class _HeroSectionState extends State<HeroSection>
     final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return SelectionArea(
-      child: ConstrainedBox(
-        constraints:
-            BoxConstraints(minHeight: MediaQuery.of(context).size.height),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height - 55,
         child: Stack(
           children: [
             // Background gradient with animated pattern
@@ -218,7 +217,7 @@ class _HeroSectionState extends State<HeroSection>
             ),
             // Scroll indicator - keep continuously animated
             Positioned(
-              bottom: isSmallScreen ? 10 : 30,
+              bottom: isSmallScreen ? 50 : 20,
               left: 0,
               right: 0,
               child: Opacity(
@@ -292,9 +291,9 @@ class HeroMainContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(height: isSmallScreen ? 30 : 60),
+        const SizedBox(height: 30),
         // Welcome message
         AnimatedBuilder(
           animation: welcomeAnimation,
@@ -469,7 +468,7 @@ class HeroMainContent extends StatelessWidget {
             );
           },
         ),
-        SizedBox(height: isSmallScreen ? 30 : 60),
+        const SizedBox(height: 10),
       ],
     );
   }

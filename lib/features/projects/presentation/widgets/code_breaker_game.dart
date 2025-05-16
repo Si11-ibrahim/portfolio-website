@@ -99,12 +99,20 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
   }
 
   void _showTutorialDialog() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('How to Play Code Breaker'),
+          title: Text(
+            'How to Play Code Breaker',
+            style: TextStyle(
+              fontSize: isSmallScreen ? 18.0 : 20.0,
+            ),
+          ),
           content: const SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -138,6 +146,14 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               child: const Text('Got it!'),
             ),
           ],
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 16.0 : 24.0,
+            vertical: isSmallScreen ? 8.0 : 16.0,
+          ),
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: isSmallScreen ? 16.0 : 40.0,
+            vertical: 24.0,
+          ),
         );
       },
     );
@@ -145,104 +161,164 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
 
   @override
   Widget build(BuildContext context) {
+    // Get screen width for responsive adjustments
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400; // Extra small mobile screens
+
+    // Adjust padding, font sizes, and spacing based on screen size
+    final containerPadding = isSmallScreen ? 8.0 : 16.0;
+    final headerFontSize = isSmallScreen ? 20.0 : 24.0;
+    final elementPadding = isSmallScreen ? 4.0 : 8.0;
+    final elementMargin = isSmallScreen ? 2.0 : 4.0;
+    final buttonSpacing = isSmallScreen ? 8.0 : 16.0;
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(containerPadding),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Fixed game header
+            // Responsive game header
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Code Breaker',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Text(
+                    'Code Breaker',
+                    style: TextStyle(
+                      fontSize: headerFontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.help_outline),
                   onPressed: _showTutorialDialog,
                   tooltip: 'How to Play',
+                  padding: EdgeInsets.all(isSmallScreen ? 4.0 : 8.0),
+                  constraints: BoxConstraints(
+                    minWidth: isSmallScreen ? 36 : 48,
+                    minHeight: isSmallScreen ? 36 : 48,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: isSmallScreen ? 8.0 : 16.0),
+            Text(
               'Break the code by arranging the brackets in the correct order!',
               textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: isSmallScreen ? 14.0 : 16.0,
+              ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isSmallScreen ? 16.0 : 24.0),
 
-            // Fixed controls
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            // Responsive controls - wrap into rows for smaller screens if needed
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: elementMargin * 2,
+              runSpacing: elementMargin * 2,
               children: _codeElements.map((element) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ElevatedButton(
-                    onPressed: () => _addToGuess(element),
-                    child: Text(element),
+                return ElevatedButton(
+                  onPressed: () => _addToGuess(element),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: elementPadding * 1.5,
+                      vertical: elementPadding,
+                    ),
+                    minimumSize:
+                        Size(isSmallScreen ? 40 : 50, isSmallScreen ? 36 : 40),
                   ),
+                  child: Text(element),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: isSmallScreen ? 12.0 : 16.0),
 
-            // Current guess display
+            // Current guess display - adapts to screen size
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ..._currentGuess.map((element) {
                   return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.all(8),
+                    margin: EdgeInsets.symmetric(horizontal: elementMargin),
+                    padding: EdgeInsets.all(elementPadding),
                     decoration: BoxDecoration(
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text(element),
+                    child: Text(
+                      element,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 14.0 : 16.0,
+                      ),
+                    ),
                   );
                 }),
                 ...List.generate(4 - _currentGuess.length, (index) {
                   return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    padding: const EdgeInsets.all(8),
+                    margin: EdgeInsets.symmetric(horizontal: elementMargin),
+                    padding: EdgeInsets.all(elementPadding),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: const Text(' '),
+                    child: Text(
+                      ' ',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 14.0 : 16.0,
+                      ),
+                    ),
                   );
                 }),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: isSmallScreen ? 12.0 : 16.0),
 
-            // Game controls
+            // Game controls - more compact for small screens
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: _removeLastGuess,
-                  child: const Text('Backspace'),
-                ),
-                const SizedBox(width: 16),
+                // Use icon button on small screens to save space
+                isSmallScreen
+                    ? ElevatedButton.icon(
+                        onPressed: _removeLastGuess,
+                        icon: const Icon(Icons.backspace_outlined, size: 18),
+                        label: const Text('Back'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 6.0,
+                          ),
+                        ),
+                      )
+                    : ElevatedButton(
+                        onPressed: _removeLastGuess,
+                        child: const Text('Backspace'),
+                      ),
+                SizedBox(width: buttonSpacing),
                 ElevatedButton(
                   onPressed: _submitGuess,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isSmallScreen ? 16.0 : 20.0,
+                      vertical: isSmallScreen ? 6.0 : 10.0,
+                    ),
+                  ),
                   child: const Text('Submit'),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isSmallScreen ? 16.0 : 24.0),
 
-            // Scrollable area for previous guesses
+            // Responsive scrollable area for previous guesses
             Flexible(
               child: Container(
-                constraints: const BoxConstraints(
-                  maxHeight: 300, // Fixed height for scrollable area
+                constraints: BoxConstraints(
+                  // Adjust height based on screen size
+                  maxHeight: isSmallScreen ? 200 : 300,
+                  minHeight: isSmallScreen ? 100 : 150,
                 ),
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -252,21 +328,23 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: _previousGuesses.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Padding(
-                          padding: EdgeInsets.all(16.0),
+                          padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
                           child: Text(
                             'Your previous guesses will appear here',
                             style: TextStyle(
                               color: Colors.grey,
                               fontStyle: FontStyle.italic,
+                              fontSize: isSmallScreen ? 12.0 : 14.0,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
                       )
                     : SingleChildScrollView(
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(isSmallScreen ? 4.0 : 8.0),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children:
@@ -274,35 +352,81 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
                               int index = entry.key;
                               List<String> guess = entry.value;
                               List<int> scores = _previousScores[index];
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    ...guess.map((element) {
-                                      return Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 4),
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                        child: Text(element),
-                                      );
-                                    }),
-                                    const SizedBox(width: 16),
-                                    Flexible(
-                                      child: Text(
+
+                              // For very small screens, use a more compact layout
+                              if (isSmallScreen) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 6.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // Guess display
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: guess.map((element) {
+                                          return Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 2),
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              border: Border.all(),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              element,
+                                              style:
+                                                  const TextStyle(fontSize: 12),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Scores below the guess
+                                      Text(
                                         '🎯 ${scores[0]} exact  •  🔄 ${scores[1]} misplaced',
+                                        style: const TextStyle(fontSize: 12),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                // For larger screens, use the original side-by-side layout
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ...guess.map((element) {
+                                        return Container(
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: elementMargin),
+                                          padding:
+                                              EdgeInsets.all(elementPadding),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                          child: Text(element),
+                                        );
+                                      }),
+                                      const SizedBox(width: 16),
+                                      Flexible(
+                                        child: Text(
+                                          '🎯 ${scores[0]} exact  •  🔄 ${scores[1]} misplaced',
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             }).toList(),
                           ),
                         ),
@@ -310,11 +434,11 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
               ),
             ),
 
-            // Congratulations message
+            // Congratulations message - responsive
             if (_showCongrats) ...[
-              const SizedBox(height: 24),
+              SizedBox(height: isSmallScreen ? 16.0 : 24.0),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -322,16 +446,16 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
                 ),
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       '🎉 Congratulations! You broke the code! 🎉',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: isSmallScreen ? 16.0 : 18.0,
                         fontWeight: FontWeight.bold,
                         color: Colors.green,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: isSmallScreen ? 12.0 : 16.0),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -343,7 +467,7 @@ class _CodeBreakerGameState extends State<CodeBreakerGame> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: isSmallScreen ? 12.0 : 16.0),
             ],
           ],
         ),

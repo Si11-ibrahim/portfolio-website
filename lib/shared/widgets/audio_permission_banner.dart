@@ -14,7 +14,6 @@ class AudioPermissionBanner extends StatefulWidget {
 
 class _AudioPermissionBannerState extends State<AudioPermissionBanner> {
   bool _showBanner = kIsWeb;
-  bool _hasUserInteracted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,6 @@ class _AudioPermissionBannerState extends State<AudioPermissionBanner> {
           // Mark that user has interacted
           AudioService().markUserInteraction();
           setState(() {
-            _hasUserInteracted = true;
             _showBanner = false;
           });
         },
